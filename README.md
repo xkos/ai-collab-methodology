@@ -14,8 +14,30 @@ A practical framework for working with AI coding assistants (Cursor, Windsurf, V
 
 **Iterative workflow** — Structured development cycle:
 ```
-Task (plan) → Implement → Checklist (acceptance test) → Iteration (archive)
+Clarify (optional) → Task (plan) → Branch → TDD + Self-review → Checklist (acceptance test) → Merge → Iteration (archive)
 ```
+
+**Requirements clarification** — Before jumping to code:
+- AI proactively asks questions about ambiguous requirements
+- Explores boundaries of "what to do" vs "what not to do"
+- Confirms understanding in digestible sections before creating task files
+
+**Test-Driven Development (TDD)** — RED-GREEN-REFACTOR cycle:
+- Write a failing test first → minimal implementation to pass → refactor → commit
+- YAGNI: only implement what the test demands, nothing more
+- Enforced for service/store/infra layers; UI covered by acceptance checklist
+
+**AI self-review** — After each task completion:
+- Spec compliance, code quality, test coverage, regression impact
+- Issues fixed before marking task as done
+
+**Branch isolation** — Each iteration works on a feature branch:
+- Create `iter/NNN-xxx` from main; merge back after tests pass
+- Failed iterations can be safely discarded
+
+**Subagent-driven development** (optional) — For parallel independent tasks:
+- Each subagent handles one task with full context
+- Main agent dispatches and reviews (spec compliance + code quality)
 
 **Testing checklist** — AI generates, human reviews and executes:
 - Acceptance tests derived from task acceptance criteria
@@ -121,6 +143,7 @@ Built on top of established practices:
 - [GUARDRAILS.md](https://guardrails.md/) — Safety guardrail protocol
 - PROGRESS.md / MEMORIES.md — Persistent memory patterns
 - Stanford IT — docs-as-code workflow
+- [obra/superpowers](https://github.com/obra/superpowers) — TDD, requirements clarification, self-review, subagent-driven development
 
 ## License
 
@@ -142,8 +165,30 @@ Built on top of established practices:
 
 **迭代工作流** — 结构化的开发循环：
 ```
-Task（事前计划）→ 实现 → Checklist（验收测试）→ Iteration（事后归档）
+澄清（按需）→ Task（事前计划）→ 分支 → TDD + 自审 → Checklist（验收测试）→ 合并 → Iteration（事后归档）
 ```
+
+**需求澄清** — 写代码之前先厘清需求：
+- AI 主动对模糊需求提问
+- 探明"做什么"和"不做什么"的边界
+- 分段确认理解后再建 task 文件
+
+**测试驱动开发（TDD）** — 红-绿-重构循环：
+- 先写失败测试 → 最小实现让测试通过 → 重构 → 提交
+- YAGNI：只实现测试要求的行为，不提前预设未来需求
+- service/store/infra 层强制，UI 层由验收 checklist 覆盖
+
+**AI 自审** — 每个 task 完成后检查：
+- 规格合规、代码质量、测试覆盖、回归影响
+- 发现问题立即修复，修复后再标记完成
+
+**分支隔离** — 每个迭代在独立分支上工作：
+- 从主分支创建 `iter/NNN-xxx`，测试通过后合并回主分支
+- 失败的迭代可以安全丢弃
+
+**子代理驱动开发**（可选）— 独立任务并行执行：
+- 每个子代理处理一个独立任务，携带完整上下文
+- 主代理负责分发和双轮 review（规格合规 + 代码质量）
 
 **测试 Checklist** — AI 生成，人审核和执行：
 - 从 task 验收标准展开的功能验收测试
@@ -249,6 +294,7 @@ ai-collab-methodology/
 - [GUARDRAILS.md](https://guardrails.md/) — 安全护栏协议
 - PROGRESS.md / MEMORIES.md — 持久记忆模式
 - Stanford IT — docs-as-code 工作流
+- [obra/superpowers](https://github.com/obra/superpowers) — TDD、需求澄清、自审、子代理驱动开发
 
 ## 许可证
 

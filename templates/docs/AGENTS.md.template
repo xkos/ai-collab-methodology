@@ -1,0 +1,67 @@
+# {{PROJECT_NAME}} AGENTS.md 模板
+
+> 此文件由 bootstrap prompt 引导 AI 根据项目信息生成。
+> 以下为骨架结构，具体内容需要根据项目填充。
+
+# {{PROJECT_NAME}}
+
+（一句话项目描述）
+
+## 项目结构
+
+- `docs/prds/` — 产品需求文档（me2ai：人维护）
+- `docs/tech/` — 技术文档（me2ai：人维护）
+- `docs/ai2ai/` — 项目状态与迭代记录（ai2ai：AI 维护，人审核）
+（补充项目特有的目录）
+
+## 架构概览
+
+（项目的架构简述）
+
+## 全局规范
+
+（项目的编码规范、依赖管理规则等）
+
+## 文档职责划分
+
+| 类别 | 位置 | 维护者 | 内容 |
+|------|------|--------|------|
+| me2ai | `docs/prds/`, `docs/tech/`, `AGENTS.md`, rules/ | 人 | 需求、架构、编码规范 — "应该是什么样" |
+| ai2ai | `docs/ai2ai/` | AI（人审核） | 项目状态、迭代记录、经验库 — "现在实际是什么样" |
+
+ai2ai 文档结构：
+- `docs/ai2ai/status.md` — 全局状态快照（每次迭代后覆盖更新）
+- `docs/ai2ai/checklist.md` — 用户验收测试清单（AI 生成/维护，人审核/勾选）
+- `docs/ai2ai/test-suite.md` — 全局用例库（从 checklist 沉淀，长期回归）
+- `docs/ai2ai/tasks/NNN-xxx.md` — 迭代任务分解（事前计划，过程中更新状态）
+- `docs/ai2ai/iterations/NNN-xxx.md` — 迭代归档（事后总结，含测试结果归档）
+- `docs/ai2ai/decisions.md` — AI 经验库（微决策 + 踩坑 + Boundary 变更）
+
+tasks/ 和 iterations/ 共享编号，一一配对：task 定义"要做什么"，iteration 记录"做完了什么"。
+
+## AI 决策边界
+
+> 框架说明见 rules/ 中的 ai-boundary-framework
+
+### Always do（直接执行）
+
+- 遵循本文件和 rules/ 中的编码规范
+- 更新 ai2ai 文档
+- 运行已有的测试和 lint
+- 按 task 文件中已审核的任务执行实现
+（补充项目特有的 Always do）
+
+### Ask first（说明意图，等确认）
+
+- 新增 task 中未提及的外部依赖
+- 修改数据库 schema
+- 改变已有 API 签名
+- 删除或重命名已有文件
+- 重构涉及超过 3 个文件的变更
+- 偏离当前 task 文件中定义的任务范围
+（补充项目特有的 Ask first）
+
+### Never do（禁止）
+
+- 删除或覆盖 me2ai 文档的内容
+（补充项目特有的 Never do）

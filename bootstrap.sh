@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ============================================================
+# bootstrap.sh
+# 在新项目中初始化 AI 协作方法论的文档结构和规则
+# ============================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEMPLATES_DIR="$SCRIPT_DIR/templates"
+
+# --- 参数解析 ---
+
+usage() {
+  cat <<EOF
+用法: $(basename "$0") [选项] <项目目录>
+
+在目标项目中初始化 AI 协作方法论的文档结构。
+
+选项:
+  --ide <cursor|windsurf|vscode|none>
+      目标 IDE，决定 rules 文件的格式和存放位置（默认: cursor）
+      - cursor:   .cursor/rules/*.mdc（带 frontmatter）
+      - windsurf: .windsurf/rules/*.md
+      - vscode:   .vscode/rules/*.md
+      - none:     rules/*.md（纯 markdown，不带 IDE 特定格式）
+
+  --project-name <名称>
+      项目名称，用于模板中的占位符替换（默认: 目录名）
+
+  --dry-run
+      只打印将要执行的操作，不实际创建文件
+
+  -h, --help
+      显示此帮助信息
+
+示例:
+  $(basename "$0") ~/projects/my-new-app
+  $(basename "$0") --ide windsurf --project-name "MyApp" ~/projects/my-new-app
+EOF
+  exit 0
+}
+
+IDE="cursor"
+PROJECT_NAME=""
+DRY_RUN=false
+TARGET_DIR=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --ide)       IDE="$2"; shift 2 ;;
+    --project-name) PROJECT_NAME="$2"; shift 2 ;;
+    --dry-run)   DRY_RUN=true; shift ;;
+    -h|--help)   usage ;;
+    -*)          echo "未知选项: $1"; usage ;;
+    *)           TARGET_DIR="$1"; shift ;;
+  esac
+done
+
+if [[ -z "$TARGET_DIR" ]]; then
+  echo "错误: 请指定项目目录"
+  usage
+fi
+
+TARGET_DIR="$(cd "$TARGET_DIR" 2>/dev/null && pwd || echo "$TARGET_DIR")"
+
+if [[ -z "$PROJECT_NAME" ]]; then
+  PROJECT_NAME="$(basename "$TARGET_DIR")"
+fi
+
+DATE="$(date +%Y-%m-%d)"
+
+# --- IDE 配置 ---
+
+case "$IDE" in
+  cursor)
+    RULES_DIR=".cursor/rules"
+    RULES_EXT=".mdc"
+    ;;
+  windsurf)
+    RULES_DIR=".windsurf/rules"
+    RULES_EXT=".md"
+    ;;
+  vscode)
+    RULES_DIR=".vscode/rules"
+    RULES_EXT=".md"
+    ;;
+  none)
+    RULES_DIR="rules"
+    RULES_EXT=".md"
+    ;;
+  *)
+    echo "错误: 不支持的 IDE: $IDE"
+    exit 1
+    ;;
+esac
+
+# --- 工具函数 ---
+
+log() { echo "  $1"; }
+create_dir() {
+  if $DRY_RUN; then
+    log "[dry-run] mkdir -p $1"
+  else
+    mkdir -p "$1"
+    log "✅ $1/"
+  fi
+}
+copy_template() {
+  local src="$1" dst="$2"
+  if [[ -f "$dst" ]]; then
+    log "⏭️  $dst（已存在，跳过）"
+    return
+  fi
+  if $DRY_RUN; then
+    log "[dry-run] $dst"
+  else
+    # 替换占位符
+    sed -e "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" \
+        -e "s/{{DATE}}/$DATE/g" \
+        "$src" > "$dst"
+    log "✅ $dst"
+  fi
+}
+
+add_frontmatter() {
+  local file="$1" desc="$2" always_apply="$3"
+  if [[ "$IDE" == "cursor" ]]; then
+    local tmp
+    tmp=$(mktemp)
+    {
+      echo "---"
+      echo "description: $desc"
+      echo "alwaysApply: $always_apply"
+      echo "---"
+      echo ""
+      cat "$file"
+    } > "$tmp"
+    mv "$tmp" "$file"
+  fi
+}
+
+# --- 执行 ---
+
+echo ""
+echo "🚀 初始化 AI 协作方法论"
+echo "   项目: $PROJECT_NAME"
+echo "   目录: $TARGET_DIR"
+echo "   IDE:  $IDE"
+echo ""
+
+# 1. 创建目录结构
+echo "📁 创建目录结构..."
+create_dir "$TARGET_DIR/docs/prds"
+create_dir "$TARGET_DIR/docs/tech"
+create_dir "$TARGET_DIR/docs/ai2ai/tasks"
+create_dir "$TARGET_DIR/docs/ai2ai/iterations"
+create_dir "$TARGET_DIR/$RULES_DIR"
+
+# 2. 复制 rules 模板
+echo ""
+echo "📋 复制 rules 模板..."
+
+RULE_FILES=(
+  "ai2ai-maintenance"
+  "ai-boundary-framework"
+  "project-methodology"
+  "session-context"
+)
+
+RULE_DESCS=(
+  "ai2ai 文档维护规则 — 定义 AI 在每次迭代中如何维护项目状态文档"
+  "AI 决策边界框架 — 定义 AI 行为的三级决策体系和边界迭代机制"
+  "项目从零到一的完整方法论 — 涵盖需求分析、产品设计、技术调研、架构设计的全流程指导"
+  "新 Session 项目上下文模板 — 帮助新会话快速了解项目全貌"
+)
+
+RULE_ALWAYS_APPLY=(
+  "true"
+  "true"
+  "false"
+  "false"
+)
+
+for i in "${!RULE_FILES[@]}"; do
+  src="$TEMPLATES_DIR/rules/${RULE_FILES[$i]}.md"
+  dst="$TARGET_DIR/$RULES_DIR/${RULE_FILES[$i]}${RULES_EXT}"
+
+  if [[ ! -f "$src" ]]; then
+    log "⚠️  模板不存在: $src"
+    continue
+  fi
+
+  copy_template "$src" "$dst"
+
+  if ! $DRY_RUN && [[ -f "$dst" ]]; then
+    add_frontmatter "$dst" "${RULE_DESCS[$i]}" "${RULE_ALWAYS_APPLY[$i]}"
+  fi
+done
+
+# 3. 复制 ai2ai 模板
+echo ""
+echo "📊 复制 ai2ai 模板..."
+copy_template "$TEMPLATES_DIR/ai2ai/status.md" "$TARGET_DIR/docs/ai2ai/status.md"
+copy_template "$TEMPLATES_DIR/ai2ai/checklist.md" "$TARGET_DIR/docs/ai2ai/checklist.md"
+copy_template "$TEMPLATES_DIR/ai2ai/test-suite.md" "$TARGET_DIR/docs/ai2ai/test-suite.md"
+copy_template "$TEMPLATES_DIR/ai2ai/decisions.md" "$TARGET_DIR/docs/ai2ai/decisions.md"
+
+# 4. 复制 AGENTS.md 模板
+echo ""
+echo "📝 复制 AGENTS.md 模板..."
+copy_template "$TEMPLATES_DIR/docs/AGENTS.md.template" "$TARGET_DIR/AGENTS.md"
+
+# 5. 完成
+echo ""
+echo "✅ 初始化完成！"
+echo ""
+echo "下一步："
+echo "  1. 编辑 AGENTS.md — 填充项目结构、全局规范、具体 Boundary 规则"
+echo "  2. 或者使用 bootstrap prompt 让 AI 帮你生成："
+echo "     cat $SCRIPT_DIR/bootstrap-prompt.md"
+echo ""

@@ -33,6 +33,11 @@ usage() {
   --project-name <名称>
       项目名称，用于模板中的占位符替换（默认: 目录名）
 
+  --lang <语言>
+      复制语言特定的编码规范和 skills 示例模板（可多次指定）
+      可用: rust, flutter（更多语言模板欢迎贡献）
+      示例: --lang rust --lang flutter
+
   --dry-run
       只打印将要执行的操作，不实际创建文件
 
@@ -43,6 +48,7 @@ usage() {
   $(basename "$0") ~/projects/my-new-app
   $(basename "$0") --ide windsurf --project-name "MyApp" ~/projects/my-new-app
   $(basename "$0") --git-flow env-branch ~/projects/my-server-app
+  $(basename "$0") --lang rust ~/projects/my-rust-app
 EOF
   exit 0
 }
@@ -52,12 +58,14 @@ GIT_FLOW="github-flow"
 PROJECT_NAME=""
 DRY_RUN=false
 TARGET_DIR=""
+LANG_TEMPLATES=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --ide)       IDE="$2"; shift 2 ;;
     --git-flow)  GIT_FLOW="$2"; shift 2 ;;
     --project-name) PROJECT_NAME="$2"; shift 2 ;;
+    --lang)      LANG_TEMPLATES+=("$2"); shift 2 ;;
     --dry-run)   DRY_RUN=true; shift ;;
     -h|--help)   usage ;;
     -*)          echo "未知选项: $1"; usage ;;
@@ -145,13 +153,16 @@ copy_template() {
 }
 
 add_frontmatter() {
-  local file="$1" desc="$2" always_apply="$3"
+  local file="$1" desc="$2" always_apply="$3" globs="${4:-}"
   if [[ "$IDE" == "cursor" ]]; then
     local tmp
     tmp=$(mktemp)
     {
       echo "---"
       echo "description: $desc"
+      if [[ -n "$globs" ]]; then
+        echo "globs: $globs"
+      fi
       echo "alwaysApply: $always_apply"
       echo "---"
       echo ""
@@ -169,6 +180,9 @@ echo "   项目: $PROJECT_NAME"
 echo "   目录: $TARGET_DIR"
 echo "   IDE:  $IDE"
 echo "   Git:  $GIT_FLOW"
+if [[ ${#LANG_TEMPLATES[@]} -gt 0 ]]; then
+  echo "   语言: ${LANG_TEMPLATES[*]}"
+fi
 echo ""
 
 # 1. 创建目录结构
@@ -187,16 +201,25 @@ echo "📋 复制 rules 模板..."
 RULE_FILES=(
   "ai2ai-maintenance"
   "ai-boundary-framework"
+  "ui-prototype"
 )
 
 RULE_DESCS=(
   "ai2ai 文档维护规则 — 定义 AI 在每次迭代中如何维护项目状态文档"
   "AI 决策边界框架 — 定义 AI 行为的三级决策体系和边界迭代机制"
+  "UI HTML 原型生成规范 — 用静态 HTML 快速验证界面布局和交互"
 )
 
 RULE_ALWAYS_APPLY=(
   "true"
   "true"
+  "false"
+)
+
+RULE_GLOBS=(
+  ""
+  ""
+  "ui-preview/**/*.html"
 )
 
 for i in "${!RULE_FILES[@]}"; do
@@ -211,7 +234,7 @@ for i in "${!RULE_FILES[@]}"; do
   copy_template "$src" "$dst"
 
   if ! $DRY_RUN && [[ -f "$dst" ]]; then
-    add_frontmatter "$dst" "${RULE_DESCS[$i]}" "${RULE_ALWAYS_APPLY[$i]}"
+    add_frontmatter "$dst" "${RULE_DESCS[$i]}" "${RULE_ALWAYS_APPLY[$i]}" "${RULE_GLOBS[$i]}"
   fi
 done
 
@@ -257,12 +280,74 @@ echo "📄 复制参考文档模板..."
 copy_template "$TEMPLATES_DIR/session-context.md" "$TARGET_DIR/docs/session-context.md"
 copy_template "$TEMPLATES_DIR/project-methodology.md" "$TARGET_DIR/docs/project-methodology.md"
 
-# 6. 复制 AGENTS.md 模板
+# 6. 复制语言规则和 skills 示例（可选，通过 --lang 指定）
+if [[ ${#LANG_TEMPLATES[@]} -gt 0 ]]; then
+  echo ""
+  echo "🌐 复制语言规则和 skills 示例..."
+
+  for lang in "${LANG_TEMPLATES[@]}"; do
+    # 语言配置：rules 文件名、描述、globs
+    case "$lang" in
+      rust)
+        lang_file="rust-conventions"
+        lang_desc="Rust 编码规范 — 模块组织、测试、命名等约定"
+        lang_globs="**/*.rs"
+        ;;
+      flutter)
+        lang_file=""
+        lang_desc=""
+        lang_globs=""
+        ;;
+      *)
+        log "⚠️  不支持的语言: ${lang}（可用: rust, flutter）"
+        continue
+        ;;
+    esac
+
+    # 6a. 复制 rules/lang-examples（如果该语言有 rules 模板）
+    if [[ -n "$lang_file" ]]; then
+      src="$TEMPLATES_DIR/rules/lang-examples/${lang_file}.md"
+      dst="$TARGET_DIR/$RULES_DIR/${lang_file}${RULES_EXT}"
+
+      if [[ ! -f "$src" ]]; then
+        log "⚠️  规则模板不存在: $src"
+      else
+        copy_template "$src" "$dst"
+
+        if ! $DRY_RUN && [[ -f "$dst" ]]; then
+          add_frontmatter "$dst" "$lang_desc" "false" "$lang_globs"
+        fi
+      fi
+    fi
+
+    # 6b. 复制 skills/lang-examples（如果该语言有 skills 模板）
+    lang_skills_dir="$TEMPLATES_DIR/skills/lang-examples/$lang"
+    if [[ -d "$lang_skills_dir" ]]; then
+      for skill_src_dir in "$lang_skills_dir"/*/; do
+        [[ -d "$skill_src_dir" ]] || continue
+        skill_name="$(basename "$skill_src_dir")"
+        skill_src="$skill_src_dir/SKILL.md"
+
+        if [[ ! -f "$skill_src" ]]; then
+          log "⚠️  skill 模板不存在: $skill_src"
+          continue
+        fi
+
+        dst_dir="$TARGET_DIR/$SKILLS_DIR/$skill_name"
+        dst="$dst_dir/SKILL.md"
+        create_dir "$dst_dir"
+        copy_template "$skill_src" "$dst"
+      done
+    fi
+  done
+fi
+
+# 7. 复制 AGENTS.md 模板
 echo ""
 echo "📝 复制 AGENTS.md 模板..."
 copy_template "$TEMPLATES_DIR/docs/AGENTS.md.template" "$TARGET_DIR/AGENTS.md"
 
-# 7. 完成
+# 8. 完成
 echo ""
 echo "✅ 初始化完成！"
 echo ""

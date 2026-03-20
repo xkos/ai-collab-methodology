@@ -86,6 +86,12 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 # Use environment branch flow (for server projects: main=production, dev=staging)
 ./ai-collab-methodology/bootstrap.sh --git-flow env-branch ~/projects/my-server-app
 
+# Include language-specific coding conventions
+./ai-collab-methodology/bootstrap.sh --lang rust ~/projects/my-rust-app
+
+# Include language-specific conventions + skills
+./ai-collab-methodology/bootstrap.sh --lang flutter ~/projects/my-flutter-app
+
 # Dry run (preview without creating files)
 ./ai-collab-methodology/bootstrap.sh --dry-run ~/projects/my-new-app
 ```
@@ -97,7 +103,8 @@ your-project/
 ├── AGENTS.md                          ← Project skeleton (needs filling)
 ├── .agents/skills/                    ← Agent Skills (on-demand, not always loaded)
 │   ├── git-workflow/SKILL.md          ← Branch management, PR, release workflow
-│   └── git-commit-summary/SKILL.md   ← Change analysis, grouping, commit message generation
+│   ├── git-commit-summary/SKILL.md   ← Change analysis, grouping, commit message generation
+│   └── <lang>-*/SKILL.md             ← Language-specific skills (optional, via --lang)
 ├── docs/
 │   ├── prds/                          ← Product requirements
 │   ├── tech/                          ← Technical docs
@@ -110,9 +117,11 @@ your-project/
 │       ├── decisions.md               ← Experience library
 │       ├── tasks/                     ← Iteration task breakdowns
 │       └── iterations/                ← Iteration archives
-└── <rules-dir>/                       ← IDE-specific location (2 rules, alwaysApply)
-    ├── ai2ai-maintenance.*            ← Iteration workflow rules
-    └── ai-boundary-framework.*        ← Three-level decision framework
+└── <rules-dir>/                       ← IDE-specific location (3 rules)
+    ├── ai2ai-maintenance.*            ← Iteration workflow rules (alwaysApply)
+    ├── ai-boundary-framework.*        ← Three-level decision framework (alwaysApply)
+    ├── ui-prototype.*                 ← HTML prototype spec (on-demand, globs: ui-preview/**)
+    └── <lang>-conventions.*           ← Language conventions (optional, via --lang)
 ```
 
 ## After bootstrap
@@ -143,10 +152,18 @@ ai-collab-methodology/
 ├── docs/
 │   └── methodology.md         ← Research background and design decisions
 └── templates/
-    ├── rules/                 ← Universal rule templates (IDE-agnostic, 2 rules)
+    ├── rules/                 ← Universal rule templates (IDE-agnostic)
+    │   ├── ai2ai-maintenance.md
+    │   ├── ai-boundary-framework.md
+    │   ├── ui-prototype.md
+    │   └── lang-examples/     ← Language-specific convention examples (optional, via --lang)
+    │       └── rust-conventions.md
     ├── skills/                ← Agent Skills templates (on-demand capabilities)
     │   ├── git-workflow/      ← Branch management, PR, release workflow
-    │   └── git-commit-summary/ ← Change analysis, grouping, commit messages
+    │   ├── git-commit-summary/ ← Change analysis, grouping, commit messages
+    │   ├── ui-design-conventions/ ← UI design conventions template (framework-agnostic)
+    │   └── lang-examples/     ← Language-specific skill examples (optional, via --lang)
+    │       └── flutter/       ← Flutter desktop design skill
     ├── session-context.md     ← New session context template (user reference, not a rule)
     ├── project-methodology.md ← Zero-to-one methodology (user reference, not a rule)
     ├── ai2ai/                 ← ai2ai document templates
@@ -255,6 +272,12 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 # 使用环境分支流（服务端项目：main=生产，dev=测试）
 ./ai-collab-methodology/bootstrap.sh --git-flow env-branch ~/projects/my-server-app
 
+# 包含语言特定的编码规范
+./ai-collab-methodology/bootstrap.sh --lang rust ~/projects/my-rust-app
+
+# 包含语言特定的编码规范 + skills
+./ai-collab-methodology/bootstrap.sh --lang flutter ~/projects/my-flutter-app
+
 # 预览（不实际创建文件）
 ./ai-collab-methodology/bootstrap.sh --dry-run ~/projects/my-new-app
 ```
@@ -266,7 +289,8 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 ├── AGENTS.md                          ← 项目骨架（需要填充）
 ├── .agents/skills/                    ← Agent Skills（按需加载，不常驻上下文）
 │   ├── git-workflow/SKILL.md          ← 分支管理、PR、发布工作流
-│   └── git-commit-summary/SKILL.md   ← 变更分析、分组、提交信息生成
+│   ├── git-commit-summary/SKILL.md   ← 变更分析、分组、提交信息生成
+│   └── <lang>-*/SKILL.md             ← 语言特定 skills（可选，通过 --lang 指定）
 ├── docs/
 │   ├── prds/                          ← 产品需求文档
 │   ├── tech/                          ← 技术文档
@@ -279,9 +303,11 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 │       ├── decisions.md               ← 经验库
 │       ├── tasks/                     ← 迭代任务分解
 │       └── iterations/                ← 迭代归档
-└── <rules-dir>/                       ← 根据 IDE 不同（2 条规则，alwaysApply）
-    ├── ai2ai-maintenance.*            ← 迭代工作流规则
-    └── ai-boundary-framework.*        ← 三级决策框架
+└── <rules-dir>/                       ← 根据 IDE 不同（3 条规则）
+    ├── ai2ai-maintenance.*            ← 迭代工作流规则（alwaysApply）
+    ├── ai-boundary-framework.*        ← 三级决策框架（alwaysApply）
+    ├── ui-prototype.*                 ← HTML 原型规范（按需加载，globs: ui-preview/**）
+    └── <lang>-conventions.*           ← 语言编码规范（可选，通过 --lang 指定）
 ```
 
 ## 脚本之后做什么
@@ -312,10 +338,18 @@ ai-collab-methodology/
 ├── docs/
 │   └── methodology.md         ← 调研背景和设计决策
 └── templates/
-    ├── rules/                 ← 通用规则模板（IDE 无关，2 条规则）
+    ├── rules/                 ← 通用规则模板（IDE 无关）
+    │   ├── ai2ai-maintenance.md
+    │   ├── ai-boundary-framework.md
+    │   ├── ui-prototype.md
+    │   └── lang-examples/     ← 语言编码规范示例（可选，通过 --lang 指定）
+    │       └── rust-conventions.md
     ├── skills/                ← Agent Skills 模板（按需加载的能力）
     │   ├── git-workflow/      ← 分支管理、PR、发布工作流
-    │   └── git-commit-summary/ ← 变更分析、分组、提交信息生成
+    │   ├── git-commit-summary/ ← 变更分析、分组、提交信息生成
+    │   ├── ui-design-conventions/ ← UI 设计规范模板（框架无关）
+    │   └── lang-examples/     ← 语言特定 skill 示例（可选，通过 --lang 指定）
+    │       └── flutter/       ← Flutter 桌面端设计规范
     ├── session-context.md     ← 新 session 上下文模板（用户参考，非规则）
     ├── project-methodology.md ← 从零到一方法论（用户参考，非规则）
     ├── ai2ai/                 ← ai2ai 文档模板

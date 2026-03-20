@@ -164,6 +164,7 @@ echo "📋 复制 rules 模板..."
 RULE_FILES=(
   "ai2ai-maintenance"
   "ai-boundary-framework"
+  "git-workflow"
   "project-methodology"
   "session-context"
 )
@@ -171,11 +172,13 @@ RULE_FILES=(
 RULE_DESCS=(
   "ai2ai 文档维护规则 — 定义 AI 在每次迭代中如何维护项目状态文档"
   "AI 决策边界框架 — 定义 AI 行为的三级决策体系和边界迭代机制"
+  "Git 工作流 — Agent-Driven GitHub Flow + PR 门禁 + Release 分支"
   "项目从零到一的完整方法论 — 涵盖需求分析、产品设计、技术调研、架构设计的全流程指导"
   "新 Session 项目上下文模板 — 帮助新会话快速了解项目全貌"
 )
 
 RULE_ALWAYS_APPLY=(
+  "true"
   "true"
   "true"
   "false"

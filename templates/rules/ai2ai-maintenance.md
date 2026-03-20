@@ -48,7 +48,9 @@ tasks/ 和 iterations/ 共享编号，一一配对。
 
 ### 1. 迭代开始前：创建分支 + 生成 task 文件
 
-**创建特性分支**：从主分支创建 `iter/NNN-xxx` 分支，所有变更提交到此分支。
+**创建特性分支**：从 main 创建 `iter/NNN-xxx` 分支，所有变更提交到此分支。
+
+> Git 工作流详见 rules/ 中的 git-workflow。始终从 main 创建分支，通过 PR 合并。
 
 创建 `docs/ai2ai/tasks/NNN-xxx.md`，内容包括：
 
@@ -140,7 +142,8 @@ tasks/ 和 iterations/ 共享编号，一一配对。
    - 更新端到端联通状态
    - 更新已知问题/技术债
 5. **按需更新 decisions.md**
-6. **合并特性分支**：测试全通过后，将 `iter/NNN-xxx` 合并回主分支
+6. **合并特性分支**：提交 PR，等人 Review + 合并到 main
+   - 其他进行中的迭代分支需 `git merge main` 同步
 
 ---
 

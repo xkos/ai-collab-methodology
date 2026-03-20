@@ -26,18 +26,19 @@
 
 每次开始实现功能前，必须按以下流程执行：
 
-### 0. 需求澄清（按需）
+### 0. 需求澄清（按需）+ 确认 Git 状态
 - 收到需求后，如果描述模糊、开放或有多种可行方案，**先提问澄清，不直接写代码**
 - 明确"做什么"和"不做什么"的边界（YAGNI — 不提前预设未来需求）
 - 复杂需求分段确认，输出设计摘要等用户确认后再建 task
-- 如果需求已明确（详细步骤、明确 bug、已有 task），可跳过此步
+- 如果需求已明确（详细步骤、明确 bug、已有 task），可跳过澄清
+- `git branch -a` + `git status` + `git log --oneline -5` — 确认当前分支、工作区状态
+- 从 main 创建迭代分支 `iter/NNN-xxx`
 
 ### 1. 读取当前状态
 - 读 `docs/ai2ai/status.md` 了解项目当前阶段和模块就绪度
 - 读 `docs/ai2ai/decisions.md` 了解已有的踩坑记录，避免重复踩坑
 
-### 2. 创建分支 + task 文件
-- 从主分支创建特性分支 `iter/NNN-xxx`，所有变更提交到此分支
+### 2. 创建 task 文件
 - 创建 `docs/ai2ai/tasks/NNN-xxx.md`，定义迭代目标和任务分解
 - 每个任务有明确的验证标准
 - 单次迭代任务数 3-8 个，超过则拆分
@@ -60,9 +61,10 @@
 - 按需追加 `docs/ai2ai/decisions.md`（踩坑记录、微决策）
 - task 文件状态改为 ✅ 已关闭
 - checklist 中的失败项纳入下一迭代修复任务
-- 特性分支合并回主分支（测试全通过后）
+- 提交 PR（`gh pr create`），等人 Review + 合并到 main
 
 详细格式见 rules/ 中的 ai2ai-maintenance
+Git 工作流见 rules/ 中的 git-workflow
 
 ## 文档职责划分
 

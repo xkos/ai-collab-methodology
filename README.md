@@ -32,8 +32,14 @@ Clarify (optional) → Task (plan) → Branch → TDD + Self-review → Checklis
 - Issues fixed before marking task as done
 
 **Branch isolation** — Each iteration works on a feature branch:
-- Create `iter/NNN-xxx` from main; merge back after tests pass
+- Create `iter/NNN-xxx` from main; merge back via PR after tests pass
 - Failed iterations can be safely discarded
+
+**Git workflow (Agent-Driven GitHub Flow)** — Supports parallel multi-agent development:
+- `main` is the only long-lived branch; iteration branches merge via PR
+- Multiple AI agents work on different branches simultaneously
+- `release/X.Y` branches for versioned releases (when needed)
+- PR serves as permanent record of each iteration (goals, changes, test results)
 
 **Subagent-driven development** (optional) — For parallel independent tasks:
 - Each subagent handles one task with full context
@@ -98,6 +104,7 @@ your-project/
 └── <rules-dir>/                       ← IDE-specific location
     ├── ai2ai-maintenance.*            ← Iteration workflow rules
     ├── ai-boundary-framework.*        ← Three-level decision framework
+    ├── git-workflow.*                 ← Git branch & PR workflow
     ├── project-methodology.*          ← Zero-to-one methodology
     └── session-context.*              ← New session context template
 ```
@@ -183,8 +190,14 @@ Built on top of established practices:
 - 发现问题立即修复，修复后再标记完成
 
 **分支隔离** — 每个迭代在独立分支上工作：
-- 从主分支创建 `iter/NNN-xxx`，测试通过后合并回主分支
+- 从主分支创建 `iter/NNN-xxx`，测试通过后通过 PR 合并回主分支
 - 失败的迭代可以安全丢弃
+
+**Git 工作流（Agent-Driven GitHub Flow）** — 支持多 Agent 并行开发：
+- `main` 是唯一长期分支，迭代分支通过 PR 合并
+- 多个 AI Agent 可同时在不同分支上工作，各自提 PR
+- `release/X.Y` 分支用于版本发布（按需启用）
+- PR 作为每个迭代的永久记录（目标、变更、测试结果）
 
 **子代理驱动开发**（可选）— 独立任务并行执行：
 - 每个子代理处理一个独立任务，携带完整上下文
@@ -249,6 +262,7 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 └── <rules-dir>/                       ← 根据 IDE 不同
     ├── ai2ai-maintenance.*            ← 迭代工作流规则
     ├── ai-boundary-framework.*        ← 三级决策框架
+    ├── git-workflow.*                 ← Git 分支与 PR 工作流
     ├── project-methodology.*          ← 从零到一方法论
     └── session-context.*              ← 新 session 上下文模板
 ```

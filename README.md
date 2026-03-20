@@ -91,9 +91,14 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 ```
 your-project/
 ├── AGENTS.md                          ← Project skeleton (needs filling)
+├── .agents/skills/                    ← Agent Skills (on-demand, not always loaded)
+│   ├── git-workflow/SKILL.md          ← Branch management, PR, release workflow
+│   └── git-commit-summary/SKILL.md   ← Change analysis, grouping, commit message generation
 ├── docs/
 │   ├── prds/                          ← Product requirements
 │   ├── tech/                          ← Technical docs
+│   ├── session-context.md             ← New session context template (user reference)
+│   ├── project-methodology.md         ← Zero-to-one methodology (user reference)
 │   └── ai2ai/
 │       ├── status.md                  ← Project status snapshot
 │       ├── checklist.md               ← Acceptance test checklist
@@ -101,12 +106,9 @@ your-project/
 │       ├── decisions.md               ← Experience library
 │       ├── tasks/                     ← Iteration task breakdowns
 │       └── iterations/                ← Iteration archives
-└── <rules-dir>/                       ← IDE-specific location
+└── <rules-dir>/                       ← IDE-specific location (2 rules, alwaysApply)
     ├── ai2ai-maintenance.*            ← Iteration workflow rules
-    ├── ai-boundary-framework.*        ← Three-level decision framework
-    ├── git-workflow.*                 ← Git branch & PR workflow
-    ├── project-methodology.*          ← Zero-to-one methodology
-    └── session-context.*              ← New session context template
+    └── ai-boundary-framework.*        ← Three-level decision framework
 ```
 
 ## After bootstrap
@@ -137,7 +139,12 @@ ai-collab-methodology/
 ├── docs/
 │   └── methodology.md         ← Research background and design decisions
 └── templates/
-    ├── rules/                 ← Universal rule templates (IDE-agnostic)
+    ├── rules/                 ← Universal rule templates (IDE-agnostic, 2 rules)
+    ├── skills/                ← Agent Skills templates (on-demand capabilities)
+    │   ├── git-workflow/      ← Branch management, PR, release workflow
+    │   └── git-commit-summary/ ← Change analysis, grouping, commit messages
+    ├── session-context.md     ← New session context template (user reference, not a rule)
+    ├── project-methodology.md ← Zero-to-one methodology (user reference, not a rule)
     ├── ai2ai/                 ← ai2ai document templates
     └── docs/                  ← AGENTS.md skeleton template
 ```
@@ -249,9 +256,14 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 ```
 你的项目/
 ├── AGENTS.md                          ← 项目骨架（需要填充）
+├── .agents/skills/                    ← Agent Skills（按需加载，不常驻上下文）
+│   ├── git-workflow/SKILL.md          ← 分支管理、PR、发布工作流
+│   └── git-commit-summary/SKILL.md   ← 变更分析、分组、提交信息生成
 ├── docs/
 │   ├── prds/                          ← 产品需求文档
 │   ├── tech/                          ← 技术文档
+│   ├── session-context.md             ← 新 session 上下文模板（用户参考）
+│   ├── project-methodology.md         ← 从零到一方法论（用户参考）
 │   └── ai2ai/
 │       ├── status.md                  ← 项目状态快照
 │       ├── checklist.md               ← 验收测试清单
@@ -259,12 +271,9 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 │       ├── decisions.md               ← 经验库
 │       ├── tasks/                     ← 迭代任务分解
 │       └── iterations/                ← 迭代归档
-└── <rules-dir>/                       ← 根据 IDE 不同
+└── <rules-dir>/                       ← 根据 IDE 不同（2 条规则，alwaysApply）
     ├── ai2ai-maintenance.*            ← 迭代工作流规则
-    ├── ai-boundary-framework.*        ← 三级决策框架
-    ├── git-workflow.*                 ← Git 分支与 PR 工作流
-    ├── project-methodology.*          ← 从零到一方法论
-    └── session-context.*              ← 新 session 上下文模板
+    └── ai-boundary-framework.*        ← 三级决策框架
 ```
 
 ## 脚本之后做什么
@@ -295,7 +304,12 @@ ai-collab-methodology/
 ├── docs/
 │   └── methodology.md         ← 调研背景和设计决策
 └── templates/
-    ├── rules/                 ← 通用规则模板（IDE 无关）
+    ├── rules/                 ← 通用规则模板（IDE 无关，2 条规则）
+    ├── skills/                ← Agent Skills 模板（按需加载的能力）
+    │   ├── git-workflow/      ← 分支管理、PR、发布工作流
+    │   └── git-commit-summary/ ← 变更分析、分组、提交信息生成
+    ├── session-context.md     ← 新 session 上下文模板（用户参考，非规则）
+    ├── project-methodology.md ← 从零到一方法论（用户参考，非规则）
     ├── ai2ai/                 ← ai2ai 文档模板
     └── docs/                  ← AGENTS.md 骨架模板
 ```

@@ -50,7 +50,7 @@ tasks/ 和 iterations/ 共享编号，一一配对。
 
 **创建特性分支**：从 main 创建 `iter/NNN-xxx` 分支，所有变更提交到此分支。
 
-> Git 工作流详见 rules/ 中的 git-workflow。始终从 main 创建分支，通过 PR 合并。
+> Git 工作流详见 skills/git-workflow。始终从 main 创建分支，通过 PR 合并。
 
 创建 `docs/ai2ai/tasks/NNN-xxx.md`，内容包括：
 
@@ -272,15 +272,10 @@ AI 自动化测试与用户验收 checklist 互补，构成完整的测试体系
 | 单元测试 / 集成测试 | AI | CI / AI | service、store、infra 层的逻辑正确性 | TDD 红-绿-重构 |
 | 用户验收测试（checklist） | AI 生成，人审核 | 人 | 端到端功能、交互体验、回归保护 | 手动验收 |
 
-### 编写要求（TDD）
+### 编写要求
 
-**service / store / infra 层**采用 TDD 红-绿-重构：
-1. 先写失败测试（描述预期行为）
-2. 写最小实现让测试通过（YAGNI — 不多写）
-3. 重构代码，确保测试仍通过
-4. 提交
+TDD 红-绿-重构流程见上方"迭代进行中"章节。各层覆盖要求：
 
-覆盖要求：
 - **service / store 层**：每个公开函数必须有对应的单元测试，覆盖正常路径 + 至少一个异常路径
 - **infra 层**：涉及文件 I/O、外部调用的函数需有集成测试（使用 tempdir 等隔离机制）
 - **model 层**：结构体的序列化/反序列化需有测试（不强制 TDD，但必须覆盖）

@@ -1,9 +1,13 @@
+---
+name: git-workflow
+description: Agent-Driven GitHub Flow for iteration branch management, PR submission, release workflow, and cross-session handoff. Use when creating branches, submitting PRs, releasing versions, switching branches, or starting a new session.
+---
 
-# Git 工作流
+# Git Workflow
 
-采用 Agent-Driven GitHub Flow：main 为唯一开发主线，迭代在独立分支上进行，通过 PR 合并。上架发布时启用 Release 分支。
+Agent-Driven GitHub Flow：main 为唯一开发主线，迭代在独立分支上进行，通过 PR 合并。上架发布时启用 Release 分支。
 
-> 适用于单人 + 多 AI Agent 并行开发的场景。alwaysApply。
+适用于单人 + 多 AI Agent 并行开发的场景。
 
 ## 分支策略
 

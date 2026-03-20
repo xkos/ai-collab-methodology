@@ -76,18 +76,22 @@ case "$IDE" in
   cursor)
     RULES_DIR=".cursor/rules"
     RULES_EXT=".mdc"
+    SKILLS_DIR=".agents/skills"
     ;;
   windsurf)
     RULES_DIR=".windsurf/rules"
     RULES_EXT=".md"
+    SKILLS_DIR=".agents/skills"
     ;;
   vscode)
     RULES_DIR=".vscode/rules"
     RULES_EXT=".md"
+    SKILLS_DIR=".agents/skills"
     ;;
   none)
     RULES_DIR="rules"
     RULES_EXT=".md"
+    SKILLS_DIR=".agents/skills"
     ;;
   *)
     echo "错误: 不支持的 IDE: $IDE"
@@ -156,6 +160,7 @@ create_dir "$TARGET_DIR/docs/tech"
 create_dir "$TARGET_DIR/docs/ai2ai/tasks"
 create_dir "$TARGET_DIR/docs/ai2ai/iterations"
 create_dir "$TARGET_DIR/$RULES_DIR"
+create_dir "$TARGET_DIR/$SKILLS_DIR"
 
 # 2. 复制 rules 模板
 echo ""
@@ -164,25 +169,16 @@ echo "📋 复制 rules 模板..."
 RULE_FILES=(
   "ai2ai-maintenance"
   "ai-boundary-framework"
-  "git-workflow"
-  "project-methodology"
-  "session-context"
 )
 
 RULE_DESCS=(
   "ai2ai 文档维护规则 — 定义 AI 在每次迭代中如何维护项目状态文档"
   "AI 决策边界框架 — 定义 AI 行为的三级决策体系和边界迭代机制"
-  "Git 工作流 — Agent-Driven GitHub Flow + PR 门禁 + Release 分支"
-  "项目从零到一的完整方法论 — 涵盖需求分析、产品设计、技术调研、架构设计的全流程指导"
-  "新 Session 项目上下文模板 — 帮助新会话快速了解项目全貌"
 )
 
 RULE_ALWAYS_APPLY=(
   "true"
   "true"
-  "true"
-  "false"
-  "false"
 )
 
 for i in "${!RULE_FILES[@]}"; do
@@ -201,7 +197,30 @@ for i in "${!RULE_FILES[@]}"; do
   fi
 done
 
-# 3. 复制 ai2ai 模板
+# 3. 复制 skills 模板
+echo ""
+echo "🛠️  复制 skills 模板..."
+
+SKILL_DIRS=(
+  "git-workflow"
+  "git-commit-summary"
+)
+
+for skill_name in "${SKILL_DIRS[@]}"; do
+  src="$TEMPLATES_DIR/skills/$skill_name/SKILL.md"
+  dst_dir="$TARGET_DIR/$SKILLS_DIR/$skill_name"
+  dst="$dst_dir/SKILL.md"
+
+  if [[ ! -f "$src" ]]; then
+    log "⚠️  模板不存在: $src"
+    continue
+  fi
+
+  create_dir "$dst_dir"
+  copy_template "$src" "$dst"
+done
+
+# 4. 复制 ai2ai 模板
 echo ""
 echo "📊 复制 ai2ai 模板..."
 copy_template "$TEMPLATES_DIR/ai2ai/status.md" "$TARGET_DIR/docs/ai2ai/status.md"
@@ -209,12 +228,18 @@ copy_template "$TEMPLATES_DIR/ai2ai/checklist.md" "$TARGET_DIR/docs/ai2ai/checkl
 copy_template "$TEMPLATES_DIR/ai2ai/test-suite.md" "$TARGET_DIR/docs/ai2ai/test-suite.md"
 copy_template "$TEMPLATES_DIR/ai2ai/decisions.md" "$TARGET_DIR/docs/ai2ai/decisions.md"
 
-# 4. 复制 AGENTS.md 模板
+# 5. 复制参考文档模板（非 IDE 规则）
+echo ""
+echo "📄 复制参考文档模板..."
+copy_template "$TEMPLATES_DIR/session-context.md" "$TARGET_DIR/docs/session-context.md"
+copy_template "$TEMPLATES_DIR/project-methodology.md" "$TARGET_DIR/docs/project-methodology.md"
+
+# 6. 复制 AGENTS.md 模板
 echo ""
 echo "📝 复制 AGENTS.md 模板..."
 copy_template "$TEMPLATES_DIR/docs/AGENTS.md.template" "$TARGET_DIR/AGENTS.md"
 
-# 5. 完成
+# 7. 完成
 echo ""
 echo "✅ 初始化完成！"
 echo ""

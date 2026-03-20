@@ -40,6 +40,7 @@ Clarify (optional) → Task (plan) → Branch → TDD + Self-review → Checklis
 - Multiple AI agents work on different branches simultaneously
 - `release/X.Y` branches for versioned releases (when needed)
 - PR serves as permanent record of each iteration (goals, changes, test results)
+- Alternative: Environment Branch Flow (`--git-flow env-branch`) for server projects where `main` = production, `dev` = staging
 
 **Subagent-driven development** (optional) — For parallel independent tasks:
 - Each subagent handles one task with full context
@@ -81,6 +82,9 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 
 # Specify project name
 ./ai-collab-methodology/bootstrap.sh --project-name "MyApp" ~/projects/my-new-app
+
+# Use environment branch flow (for server projects: main=production, dev=staging)
+./ai-collab-methodology/bootstrap.sh --git-flow env-branch ~/projects/my-server-app
 
 # Dry run (preview without creating files)
 ./ai-collab-methodology/bootstrap.sh --dry-run ~/projects/my-new-app
@@ -205,6 +209,7 @@ Built on top of established practices:
 - 多个 AI Agent 可同时在不同分支上工作，各自提 PR
 - `release/X.Y` 分支用于版本发布（按需启用）
 - PR 作为每个迭代的永久记录（目标、变更、测试结果）
+- 可选：环境分支流（`--git-flow env-branch`），适用于 `main` 绑定生产、`dev` 绑定测试的服务端项目
 
 **子代理驱动开发**（可选）— 独立任务并行执行：
 - 每个子代理处理一个独立任务，携带完整上下文
@@ -246,6 +251,9 @@ git clone https://github.com/xkos/ai-collab-methodology.git
 
 # 指定项目名称
 ./ai-collab-methodology/bootstrap.sh --project-name "MyApp" ~/projects/my-new-app
+
+# 使用环境分支流（服务端项目：main=生产，dev=测试）
+./ai-collab-methodology/bootstrap.sh --git-flow env-branch ~/projects/my-server-app
 
 # 预览（不实际创建文件）
 ./ai-collab-methodology/bootstrap.sh --dry-run ~/projects/my-new-app

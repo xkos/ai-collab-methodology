@@ -25,6 +25,11 @@ usage() {
       - vscode:   .vscode/rules/*.md
       - none:     rules/*.md（纯 markdown，不带 IDE 特定格式）
 
+  --git-flow <github-flow|env-branch>
+      Git 分支策略（默认: github-flow）
+      - github-flow:  main 为开发主线，适用于库/CLI/客户端应用
+      - env-branch:   main 绑定生产、dev 绑定测试，适用于服务端项目
+
   --project-name <名称>
       项目名称，用于模板中的占位符替换（默认: 目录名）
 
@@ -37,11 +42,13 @@ usage() {
 示例:
   $(basename "$0") ~/projects/my-new-app
   $(basename "$0") --ide windsurf --project-name "MyApp" ~/projects/my-new-app
+  $(basename "$0") --git-flow env-branch ~/projects/my-server-app
 EOF
   exit 0
 }
 
 IDE="cursor"
+GIT_FLOW="github-flow"
 PROJECT_NAME=""
 DRY_RUN=false
 TARGET_DIR=""
@@ -49,6 +56,7 @@ TARGET_DIR=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --ide)       IDE="$2"; shift 2 ;;
+    --git-flow)  GIT_FLOW="$2"; shift 2 ;;
     --project-name) PROJECT_NAME="$2"; shift 2 ;;
     --dry-run)   DRY_RUN=true; shift ;;
     -h|--help)   usage ;;
@@ -56,6 +64,15 @@ while [[ $# -gt 0 ]]; do
     *)           TARGET_DIR="$1"; shift ;;
   esac
 done
+
+# 验证 git-flow 参数
+case "$GIT_FLOW" in
+  github-flow|env-branch) ;;
+  *)
+    echo "错误: 不支持的 git-flow: $GIT_FLOW（可选: github-flow, env-branch）"
+    exit 1
+    ;;
+esac
 
 if [[ -z "$TARGET_DIR" ]]; then
   echo "错误: 请指定项目目录"
@@ -151,6 +168,7 @@ echo "🚀 初始化 AI 协作方法论"
 echo "   项目: $PROJECT_NAME"
 echo "   目录: $TARGET_DIR"
 echo "   IDE:  $IDE"
+echo "   Git:  $GIT_FLOW"
 echo ""
 
 # 1. 创建目录结构
@@ -207,7 +225,12 @@ SKILL_DIRS=(
 )
 
 for skill_name in "${SKILL_DIRS[@]}"; do
-  src="$TEMPLATES_DIR/skills/$skill_name/SKILL.md"
+  # git-workflow 根据 --git-flow 参数选择模板
+  if [[ "$skill_name" == "git-workflow" && "$GIT_FLOW" == "env-branch" ]]; then
+    src="$TEMPLATES_DIR/skills/$skill_name/SKILL.env-branch.md"
+  else
+    src="$TEMPLATES_DIR/skills/$skill_name/SKILL.md"
+  fi
   dst_dir="$TARGET_DIR/$SKILLS_DIR/$skill_name"
   dst="$dst_dir/SKILL.md"
 

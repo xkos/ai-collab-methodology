@@ -138,7 +138,7 @@ create_dir() {
 copy_template() {
   local src="$1" dst="$2"
   if [[ -f "$dst" ]]; then
-    log "⏭️  $dst（已存在，跳过）"
+    log "⏭ $dst（已存在，跳过）"
     return
   fi
   if $DRY_RUN; then
@@ -202,17 +202,20 @@ RULE_FILES=(
   "ai2ai-maintenance"
   "ai-boundary-framework"
   "ui-prototype"
+  "code-simplifier"
 )
 
 RULE_DESCS=(
   "ai2ai 文档维护规则 — 定义 AI 在每次迭代中如何维护项目状态文档"
   "AI 决策边界框架 — 定义 AI 行为的三级决策体系和边界迭代机制"
   "UI HTML 原型生成规范 — 用静态 HTML 快速验证界面布局和交互"
+  "代码简化与精炼 — TDD 重构阶段的具体指导，在保持功能不变的前提下提升代码的清晰度和可维护性"
 )
 
 RULE_ALWAYS_APPLY=(
   "true"
   "true"
+  "false"
   "false"
 )
 
@@ -220,6 +223,7 @@ RULE_GLOBS=(
   ""
   ""
   "ui-preview/**/*.html"
+  ""
 )
 
 for i in "${!RULE_FILES[@]}"; do

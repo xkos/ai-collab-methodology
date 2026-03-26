@@ -193,6 +193,7 @@ create_dir "$TARGET_DIR/docs/ai2ai/tasks"
 create_dir "$TARGET_DIR/docs/ai2ai/iterations"
 create_dir "$TARGET_DIR/$RULES_DIR"
 create_dir "$TARGET_DIR/$SKILLS_DIR"
+create_dir "$TARGET_DIR/.claude/commands"
 
 # 2. 复制 rules 模板
 echo ""
@@ -270,7 +271,28 @@ for skill_name in "${SKILL_DIRS[@]}"; do
   copy_template "$src" "$dst"
 done
 
-# 4. 复制 ai2ai 模板
+# 4. 复制 commands 模板
+echo ""
+echo "⌨️  复制 commands 模板..."
+
+COMMAND_FILES=(
+  "iter"
+  "checklist"
+)
+
+for cmd in "${COMMAND_FILES[@]}"; do
+  src="$TEMPLATES_DIR/commands/${cmd}.md"
+  dst="$TARGET_DIR/.claude/commands/${cmd}.md"
+
+  if [[ ! -f "$src" ]]; then
+    log "⚠️  模板不存在: $src"
+    continue
+  fi
+
+  copy_template "$src" "$dst"
+done
+
+# 5. 复制 ai2ai 模板
 echo ""
 echo "📊 复制 ai2ai 模板..."
 copy_template "$TEMPLATES_DIR/ai2ai/status.md" "$TARGET_DIR/docs/ai2ai/status.md"
@@ -278,13 +300,13 @@ copy_template "$TEMPLATES_DIR/ai2ai/checklist.md" "$TARGET_DIR/docs/ai2ai/checkl
 copy_template "$TEMPLATES_DIR/ai2ai/test-suite.md" "$TARGET_DIR/docs/ai2ai/test-suite.md"
 copy_template "$TEMPLATES_DIR/ai2ai/decisions.md" "$TARGET_DIR/docs/ai2ai/decisions.md"
 
-# 5. 复制参考文档模板（非 IDE 规则）
+# 6. 复制参考文档模板（非 IDE 规则）
 echo ""
 echo "📄 复制参考文档模板..."
 copy_template "$TEMPLATES_DIR/session-context.md" "$TARGET_DIR/docs/session-context.md"
 copy_template "$TEMPLATES_DIR/project-methodology.md" "$TARGET_DIR/docs/project-methodology.md"
 
-# 6. 复制语言规则和 skills 示例（可选，通过 --lang 指定）
+# 7. 复制语言规则和 skills 示例（可选，通过 --lang 指定）
 if [[ ${#LANG_TEMPLATES[@]} -gt 0 ]]; then
   echo ""
   echo "🌐 复制语言规则和 skills 示例..."
@@ -346,12 +368,12 @@ if [[ ${#LANG_TEMPLATES[@]} -gt 0 ]]; then
   done
 fi
 
-# 7. 复制 AGENTS.md 模板
+# 8. 复制 AGENTS.md 模板
 echo ""
 echo "📝 复制 AGENTS.md 模板..."
 copy_template "$TEMPLATES_DIR/docs/AGENTS.md.template" "$TARGET_DIR/AGENTS.md"
 
-# 8. 完成
+# 9. 完成
 echo ""
 echo "✅ 初始化完成！"
 echo ""

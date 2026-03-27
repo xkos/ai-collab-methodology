@@ -150,7 +150,9 @@ ai-collab-methodology/
 ├── bootstrap.sh               ← Bootstrap script
 ├── bootstrap-prompt.md        ← Prompt template for AI to fill project-specific content
 ├── docs/
-│   └── methodology.md         ← Research background and design decisions
+│   ├── ai-coding-philosophy.md    ← Why this methodology exists: critique of popular AI coding theories
+│   ├── ai-coding-philosophy-en.md ← English version of the above
+│   └── methodology.md             ← Research background and design decisions
 └── templates/
     ├── rules/                 ← Universal rule templates (IDE-agnostic)
     │   ├── ai2ai-maintenance.md
@@ -336,7 +338,9 @@ ai-collab-methodology/
 ├── bootstrap.sh               ← 初始化脚本
 ├── bootstrap-prompt.md        ← AI 填充项目内容的 prompt 模板
 ├── docs/
-│   └── methodology.md         ← 调研背景和设计决策
+│   ├── ai-coding-philosophy.md    ← 方法论的思想基础：对三种流行 AI 编程理论的批判性分析
+│   ├── ai-coding-philosophy-en.md ← 上文的英文版本
+│   └── methodology.md             ← 调研背景和设计决策
 └── templates/
     ├── rules/                 ← 通用规则模板（IDE 无关）
     │   ├── ai2ai-maintenance.md
